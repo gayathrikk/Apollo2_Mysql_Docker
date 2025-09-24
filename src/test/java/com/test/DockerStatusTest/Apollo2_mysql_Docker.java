@@ -17,12 +17,12 @@ public class Apollo2_mysql_Docker {
         String vmIpAddress = "172.16.20.232";
         String username = "hbp";
         String password = "Health#123";
-        String containerId = "3694b167d424";
+        String containerName = "db";  // ✅ Using docker name instead of ID
 
-        System.out.println("Apollo2 MySQL Docker ID = " + containerId);
+        System.out.println("Apollo2 MySQL Docker = " + containerName);
 
-        if (containerId.isEmpty()) {
-            System.out.println("Container ID is required.");
+        if (containerName.isEmpty()) {
+            System.out.println("Container name is required.");
             return;
         }
 
@@ -34,7 +34,7 @@ public class Apollo2_mysql_Docker {
             session.connect();
 
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand("docker inspect --format='{{.State.Status}}' " + containerId);
+            channel.setCommand("docker inspect --format='{{.State.Status}}' " + containerName);
             channel.setInputStream(null);
             channel.setErrStream(System.err);
             BufferedReader reader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
@@ -97,7 +97,6 @@ public class Apollo2_mysql_Docker {
         try {
             Message message = new MimeMessage(mailSession);
             message.setFrom(new InternetAddress(from, "Docker Monitor"));
-            // Convert arrays to comma-separated strings
             message.setRecipients(
                 Message.RecipientType.TO,
                 InternetAddress.parse(String.join(",", to))
